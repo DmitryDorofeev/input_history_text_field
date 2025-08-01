@@ -98,6 +98,11 @@ class InputHistoryController {
     await _save();
   }
 
+  Future<void> removeAll() async {
+    _histories.removeAll();
+    await _save();
+  }
+
   Future<void> _save() async {
     this.list.add(this._histories);
     await this._savePreference();
@@ -106,6 +111,12 @@ class InputHistoryController {
   Future<void> add(String text) async {
     if (!this._validate(text)) return;
     _histories.addByText(text);
+    await _save();
+    this.hide();
+  }
+
+  Future<void> addAll(List<String> texts) async {
+    _histories.addAll(texts);
     await _save();
     this.hide();
   }

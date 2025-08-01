@@ -15,6 +15,12 @@ class InputHistoryItems {
     this._items.insert(0, (InputHistoryItem(text)));
   }
 
+  void addAll(List<String> texts) {
+    texts.forEach((text) {
+      this.addByText(text);
+    });
+  }
+
   void updateByText(String text) {
     final index = this._items.indexWhere((e) => e.text == text);
     this._items.removeAt(index);
@@ -36,5 +42,9 @@ class InputHistoryItems {
 
   void remove(InputHistoryItem item) {
     this._items.removeWhere((i) => i.createdTime == item.createdTime);
+  }
+
+  void removeAll() {
+    this._items.clear();
   }
 }
