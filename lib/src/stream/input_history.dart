@@ -17,6 +17,7 @@ class InputHistoryController {
   late bool _updateSelectedHistoryItemDateTime;
 
   bool _isShow = false;
+  bool _disposed = false;
   late InputHistoryItems _histories;
   InputHistoryItems get getHistory => this._histories;
 
@@ -46,6 +47,7 @@ class InputHistoryController {
     }
 
     if (!_isShow) await this._init();
+    if (_disposed) return;
     if (this._histories.isEmpty) {
       this._forceHide();
       return;
@@ -64,6 +66,7 @@ class InputHistoryController {
 
   void _forceHide() {
     _isShow = false;
+    if (_disposed) return;
     this._clearFilter();
     this.listOpen.add(_isShow);
     this.listShow.add(_isShow);
@@ -75,20 +78,23 @@ class InputHistoryController {
     }
 
     _activeController = this;
+    if (_disposed) return;
     this.listOpen.add(true);
     this.listShow.add(true);
     _isShow = true;
   }
 
   void hide() {
+    _isShow = false;
+    if (_disposed) return;
     this.listOpen.add(false);
     this.listShow.add(false);
-    _isShow = false;
   }
 
   Future<void> _init() async {
     this._histories = InputHistoryItems(this._limit);
     await this._load();
+    if (_disposed) return;
     this.listEmpty.add(this._histories.isEmpty);
     this.list.add(this._histories);
   }
@@ -104,6 +110,7 @@ class InputHistoryController {
   }
 
   Future<void> _save() async {
+    if (_disposed) return;
     this.list.add(this._histories);
     await this._savePreference();
   }
@@ -172,6 +179,7 @@ class InputHistoryController {
   }
 
   void dispose() {
+    _disposed = true;
     _activeController = null;
     list.close();
     listOpen.close();
@@ -180,10 +188,12 @@ class InputHistoryController {
   }
 
   void _clearFilter() {
+    if (_disposed) return;
     this.list.add(this._histories);
   }
 
   void filterHistory(String text) {
+    if (_disposed) return;
     if (text.isEmpty) {
       this._clearFilter();
       return;
